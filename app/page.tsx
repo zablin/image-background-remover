@@ -37,12 +37,15 @@ export default function Home() {
         body: JSON.stringify({ image })
       })
 
-      if (!res.ok) throw new Error('处理失败')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.error || '处理失败')
+      }
       
       const data = await res.json()
       setResult(data.result)
-    } catch (err) {
-      setError('背景移除失败，请重试')
+    } catch (err: any) {
+      setError(err.message || '背景移除失败，请重试')
     } finally {
       setLoading(false)
     }
@@ -96,7 +99,7 @@ export default function Home() {
                 {result && (
                   <div>
                     <h3 className="font-semibold mb-2">处理后</h3>
-                    <img src={result} alt="处理后" className="w-full rounded" />
+                    <img src={result} alt="处理后" className="w-full rounded bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZGRkIi8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNkZGQiLz48L3N2Zz4=')]" />
                   </div>
                 )}
               </div>
